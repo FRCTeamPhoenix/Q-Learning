@@ -7,46 +7,115 @@ public class Robot {
 
 	private int x;
 	private int y;
+	private int direction;
 	private int cube;
+	private int color;
 	private boolean climb;
 
-	public Robot(int x, int y) {
+	public Robot(int x, int y, int cube, int color, int direction) {
 		this.x = x;
 		this.y = y;
-		cube = 1;
-		climb = false;
-	}
-
-	public Robot(int x, int y, int cube, boolean climb) {
-		this(x, y);
 		this.cube = cube;
-		this.climb = climb;
+		this.direction = direction;
+		this.color = color;
+		this.climb = false;
 	}
 
 	public void draw(Graphics g, int size) {
-		g.setColor(Color.GREEN);
+
+		if (cube == 1) {
+			g.setColor(Color.GREEN);
+		} else {
+			g.setColor(Color.CYAN);
+		}
+
 		g.fillRect(x * size, y * size, size, size);
+		if (color == 0) {
+			g.setColor(Color.RED);
+		} else {
+			g.setColor(Color.BLUE);
+		}
+		g.fillOval(x * size + 2, y * size + 2, size * 4 / 5, size * 4 / 5);
+		char c = 0;
+		if (direction == 0)
+			c = (char) 9650;
+		if (direction == 1)
+			c = (char) 9658;
+		if (direction == 2)
+			c = (char) 9660;
+		if (direction == 3)
+			c = (char) 9668;
+
+		g.setColor(Color.BLACK);
+		g.drawString("" + c, x * size + 3, (y + 1) * size - 3);
 	}
 
 	public void update(int action) {
 		switch (action) {
-		case 0:
-			x++;
-			break;
 		case 1:
-			x--;
+			direction--;
+			if (direction == -1)
+				direction = 3;
 			break;
 		case 2:
-			y--;
+			direction++;
+			if (direction == 4)
+				direction = 0;
 			break;
 		case 3:
-			y++;
+			if (direction == 0) {
+
+				y--;
+			} else if (direction == 1) {
+
+				x++;
+			} else if (direction == 2) {
+
+				y++;
+			} else {
+
+				x--;
+			}
+			break;
+		case 4:
+			cube = 0;
+			break;
+		case 5:
+			cube = 1;
+			break;
+		case 6:
+			cube = 0;
+			break;
+		case 7:
+			cube = 0;
+			break;
+		case 8:
+			cube = 0;
+			break;
+		case 9:
+			climb = true;
 			break;
 		default:
 			break;
 
 		}
 
+	}
+
+	public int getColor() {
+		return color;
+	}
+
+	public void setColor(int color) {
+		this.color = color;
+	}
+
+	public int getDirection() {
+		return direction;
+	}
+
+	public void setDirection(int direction) {
+		this.direction = direction;
 	}
 
 	public int getX() {

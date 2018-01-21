@@ -13,6 +13,7 @@ public class Arena {
 	private int arenaHeight;
 	private int arenaWidth;
 	private char[][] layout;
+	private int[][] states;
 	private int size = 20;
 	DrawingPanel panel;
 	private Graphics g;
@@ -22,6 +23,7 @@ public class Arena {
 		this.arenaWidth = arenaWidth;
 		this.fileName = fileName;
 		layout = new char[arenaHeight][arenaWidth];
+		states = new int[arenaHeight][arenaWidth];
 		panel = new DrawingPanel(arenaWidth * size, arenaHeight * size);
 		g = panel.getGraphics();
 		createArena();
@@ -33,6 +35,9 @@ public class Arena {
 		this.layout = layout;
 		panel = new DrawingPanel(arenaWidth * size, arenaHeight * size);
 		g = panel.getGraphics();
+	}
+	public void edit(int x,int y, char c) {
+		layout[y][x] = c;
 	}
 
 	private void createArena() {
@@ -49,16 +54,32 @@ public class Arena {
 					continue;
 				}
 				layout[i][j] = c;
+				
+				
 				j++;
 				if (j == arenaWidth) {
 					j = 0;
 					i++;
 				}
 			}
-			System.out.println("done reading arena");
+//			for (int r = 0;r < arenaHeight;r++) {
+//				for (int c = 0;c < arenaWidth;c++) {
+//					System.out.print(layout[r][c]);
+//				}
+//				System.out.println();
+//			}
+//			System.out.println("done reading arena");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public int[][] getStates() {
+		return states;
+	}
+
+	public void setStates(int[][] states) {
+		this.states = states;
 	}
 
 	public void draw() {
@@ -66,9 +87,9 @@ public class Arena {
 		for (int i = 0; i < arenaHeight; i++) {
 			for (int j = 0; j < arenaWidth; j++) {
 
-				if (layout[i][j] == 'P' || layout[i][j] == 'E' || layout[i][j] == 'A' || layout[i][j] == 'H') {
+				if (layout[i][j] == 'B' || layout[i][j] == 'Q' || layout[i][j] == 'P' || layout[i][j] == 'E' || layout[i][j] == 'A' || layout[i][j] == 'H') {
 					g.setColor(Color.RED);
-				} else if (layout[i][j] == 'p' || layout[i][j] == 'e' || layout[i][j] == 'a' || layout[i][j] == 'h') {
+				} else if (layout[i][j] == 'b' ||layout[i][j] == 'q' || layout[i][j] == 'p' || layout[i][j] == 'e' || layout[i][j] == 'a' || layout[i][j] == 'h') {
 					g.setColor(Color.BLUE);
 				} else if (layout[i][j] == 'L' || layout[i][j] == 'l') {
 					g.setColor(Color.BLACK);

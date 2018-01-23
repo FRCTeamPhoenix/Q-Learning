@@ -235,7 +235,7 @@ public class Simulation {
 								}
 							} else {
 								R[k][target][t][r] = -10;
-							}
+							} 
 
 						}
 

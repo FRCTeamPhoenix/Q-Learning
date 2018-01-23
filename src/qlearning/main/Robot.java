@@ -49,7 +49,35 @@ public class Robot {
 		g.setColor(Color.BLACK);
 		g.drawString("" + c, x * size + 3, (y + 1) * size - 3);
 	}
-
+	public Robot clone() {
+		return new Robot(x,y,cube,color,direction);
+	}
+	public static Robot[] cloneRobotArray(Robot[] robots) {
+		Robot[] newRobot = new Robot[robots.length];
+		for (int i = 0;i < robots.length;i++) {
+			newRobot[i] = robots[i].clone();
+		}
+		return newRobot;
+	}
+	public boolean equals(Object object) {
+		if (object instanceof Robot && ((Robot) object).getX() == this.x
+				&& ((Robot) object).getY() == this.y && ((Robot) object).getCube() == this.cube
+				&& ((Robot) object).getColor() == this.color
+				&& ((Robot) object).getDirection() == this.direction
+				&& ((Robot) object).isClimb() == this.climb) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	public static boolean equalsRobotArray(Robot[] r1, Robot[] r2) {
+		for (int i = 0;i < 3;i++) {
+			if (!r1[i].equals(r2[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
 	public void update(int action) {
 		switch (action) {
 		case 1:
@@ -97,9 +125,11 @@ public class Robot {
 			break;
 		default:
 			break;
-
 		}
+	}
 
+	public String toString() {
+		return x + " " + y + " " + cube + " "  + color + " "+ direction + " ";
 	}
 
 	public int getColor() {

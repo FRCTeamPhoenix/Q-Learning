@@ -109,10 +109,7 @@ public class Arena {
 		}
 	}
 
-	public void update() {
-		// TODO Auto-generated method stub
 
-	}
 
 	public String getFileName() {
 		return fileName;

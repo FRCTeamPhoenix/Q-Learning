@@ -1,4 +1,4 @@
-package qlearning.main;
+package qlearning;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -238,7 +238,7 @@ public class QLearning {
 		return arena;
 	}
 
-
+ 
 	public void setarena(char[][] arena) {
 		this.arena = arena;
 	}

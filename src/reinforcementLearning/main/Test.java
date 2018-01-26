@@ -3,14 +3,11 @@ package reinforcementLearning.main;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
-import monteCarloAlgorithm.MonteCarlo;
+import montecarlo.MonteCarlo;
 import simulation.Arena;
+import simulation.State;
 import simulation.Robot;
 import simulation.Simulation;
 
@@ -30,23 +27,44 @@ public class Test {
 		robots[5] = new Robot(54, 21, 1, 1, 3);
 
 		//
+		long startTime = System.currentTimeMillis();
+
 		Simulation sim = new Simulation(arena, robots);
 		MonteCarlo monteCarlo = new MonteCarlo();
-		sim.drawNode(sim.getCurrentNode());
+		sim.setCurrentState(new State(sim.getInitState()));
+		int[] actions = new int[5400];
+		Scanner input = new Scanner(new File("resources/actions.txt"));
+		for (int i = 0;i < actions.length;i++) {
+			actions[i] = input.nextInt();
+		}
+		input.close();
+		sim.drawState(sim.getCurrentState());
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		while (sim.getCurrentNode().getTime() <= sim.getGameDuration()) {
-			if (sim.getCurrentNode().getTime() % (sim.getRobotCount()) == 1) {
-				sim.drawNode(sim.getCurrentNode());
-				
+		while (sim.getCurrentState().getTime() <= sim.getGameDuration()) {
+			
+			if (sim.getCurrentState().getTime() % (sim.getRobotCount()) == 1) {
+				sim.drawState(sim.getCurrentState());
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-
-			if (sim.getCurrentNode().getCurrentPlayer() < 3) sim.updateNode(sim.getCurrentNode(), monteCarlo.findBestAction(sim, 10));
-			else sim.updateNode(sim.getCurrentNode(), sim.createRandomAction(sim.getCurrentNode().getRobots()[sim.getCurrentNode().getCurrentPlayer()]));
+			
+			sim.updateState(sim.getCurrentState(), actions[sim.getCurrentState().getTime() - 1] );
+			
 		}
+		sim.drawState(sim.getCurrentState());
+		System.out.println(sim.getCurrentState());
+		
+		
+		long endTime   = System.currentTimeMillis();
+		long totalTime = endTime - startTime;
+		System.out.println("Total time of simulation: " + totalTime / 1000);
 
 	}
 

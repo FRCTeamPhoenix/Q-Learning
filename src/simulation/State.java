@@ -3,7 +3,7 @@ package simulation;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Node {
+public class State {
 	private Robot[] robots;
 	private Map<Character, Integer> powerCubes;
 	private int currentPlayer;
@@ -15,7 +15,7 @@ public class Node {
 	private int redClimb;
 	private int blueClimb;
 
-	public Node(Robot[] robots, Map<Character, Integer> powerCubes, int time, int currentPlayer,int redScore,int blueScore,int redClimb, int blueClimb) {
+	public State(Robot[] robots, Map<Character, Integer> powerCubes, int time, int currentPlayer,int redScore,int blueScore,int redClimb, int blueClimb) {
 		this.robots = Robot.cloneRobotArray(robots);
 		this.powerCubes = new LinkedHashMap<Character, Integer>(powerCubes);
 		this.time = time;
@@ -30,14 +30,14 @@ public class Node {
 		n = 0;
 	} 
 	
-	public Node(Node node) {
+	public State(State node) {
 		this(node.robots,node.powerCubes,node.time,node.currentPlayer,node.redScore,node.blueScore,node.redClimb,node.blueClimb);
 	}
 	
 	public boolean equals(Object o) {
-		return o instanceof Node && Robot.equalsRobotArray(((Node) o).getRobots(), robots) && ((Node) o).getPowerCubes().equals(powerCubes)
-				&& ((Node) o).getTime() == time && ((Node) o).getCurrentPlayer() == currentPlayer && ((Node) o).getRedScore() == redScore
-				&& ((Node) o).getBlueScore() == blueScore && ((Node) o).getRedClimb() == redClimb && ((Node) o).getBlueClimb() == blueClimb;
+		return o instanceof State && Robot.equalsRobotArray(((State) o).getRobots(), robots) && ((State) o).getPowerCubes().equals(powerCubes)
+				&& ((State) o).getTime() == time && ((State) o).getCurrentPlayer() == currentPlayer && ((State) o).getRedScore() == redScore
+				&& ((State) o).getBlueScore() == blueScore && ((State) o).getRedClimb() == redClimb && ((State) o).getBlueClimb() == blueClimb;
 	}
 	
 	public String toString() {

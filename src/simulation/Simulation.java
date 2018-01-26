@@ -17,10 +17,10 @@ public class Simulation {
 	private Map<Character, Integer> initPowerCubes;
 	private char[][] layout;
 	private final int robotCount = 6;
-	private Node initNode;
+	private State initState;
 	private final int speed = 6;
 	private Random random = new Random();
-	private Node currentNode;
+	private State currentState;
 
 	public Simulation(Arena arena, Robot[] robots) {
 		this.robots = Robot.cloneRobotArray(robots);
@@ -30,8 +30,8 @@ public class Simulation {
 		initPowerCubes = new LinkedHashMap<Character, Integer>();
 		initPowerCubes();
 		layout = arena.getLayout();
-		initNode = new Node(robots, initPowerCubes, 1, 0, 0, 0, 0, 0);
-		currentNode = new Node(initNode);
+		initState = new State(robots, initPowerCubes, 1, 0, 0, 0, 0, 0);
+		currentState = new State(initState);
 	}
 
 	// Runs a simulation of the game with random actions
@@ -39,16 +39,16 @@ public class Simulation {
 		initPowerCubes = new LinkedHashMap<Character, Integer>();
 		initPowerCubes();
 		layout = arena.getLayout();
-		currentNode = new Node(initNode);
-		drawNode(currentNode);
+		currentState = new State(initState);
+		drawState(currentState);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		while (currentNode.getTime() <= gameDuration) {
-			if (currentNode.getTime() % (robotCount) == 1) {
-				drawNode(currentNode);
+		while (currentState.getTime() <= gameDuration) {
+			if (currentState.getTime() % (robotCount) == 1) {
+				drawState(currentState);
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
@@ -56,7 +56,7 @@ public class Simulation {
 				}
 			}
 
-			updateNode(currentNode, createRandomAction(currentNode.getRobots()[currentNode.getCurrentPlayer()]));
+			updateState(currentState, createRandomAction(currentState.getRobots()[currentState.getCurrentPlayer()]));
 
 		}
 	}
@@ -77,42 +77,42 @@ public class Simulation {
 		if (nextToScaleOrSwitch(getFront(r), r) && r.getCube() == 1) {
 			possibleActions.add(4);
 		}
-		if (nextToCube(getFront(r), r) && (currentNode.getPowerCubes().get(getFront(r)) > 0) && r.getCube() == 0) {
+		if (nextToCube(getFront(r), r) && (currentState.getPowerCubes().get(getFront(r)) > 0) && r.getCube() == 0) {
 			possibleActions.add(5);
 ;
 		}
-		if (r.getCube() == 1 && currentNode.getTime() / speed / robotCount> 15) {
+		if (r.getCube() == 1 && currentState.getTime() / speed / robotCount> 15) {
 			if (getFront(r) == 'B' && r.getColor() == 0) {
-				if (currentNode.getPowerCubes().get('F') < 3) {
+				if (currentState.getPowerCubes().get('F') < 3) {
 					possibleActions.add(6);
 				}
-				if (currentNode.getPowerCubes().get('B') < 3) {
+				if (currentState.getPowerCubes().get('B') < 3) {
 					possibleActions.add(7);
 				}
-				if (currentNode.getPowerCubes().get('L') < 3) {
+				if (currentState.getPowerCubes().get('L') < 3) {
 					possibleActions.add(8);
 				}
 			}
 		}
-		if (r.getCube() == 1 && currentNode.getTime() / speed / robotCount > 15) {
+		if (r.getCube() == 1 && currentState.getTime() / speed / robotCount > 15) {
 			if (getFront(r) == 'b' && r.getColor() == 1) {
-				if (currentNode.getPowerCubes().get('f') < 3) {
+				if (currentState.getPowerCubes().get('f') < 3) {
 					possibleActions.add(6);
 				}
-				if (currentNode.getPowerCubes().get('b') < 3) {
+				if (currentState.getPowerCubes().get('b') < 3) {
 					possibleActions.add(7);
 				}
-				if (currentNode.getPowerCubes().get('l') < 3) {
+				if (currentState.getPowerCubes().get('l') < 3) {
 					possibleActions.add(8);
 				}
 			}
 		}
-		if (currentNode.getTime() / speed / robotCount > 120 && layout[r.getY()][r.getX()] == 'H' && getFront(r) == 'T'
-				&& currentNode.getRedClimb() < 2 && r.getColor() == 0) {
+		if (currentState.getTime() / speed / robotCount > 120 && layout[r.getY()][r.getX()] == 'H' && getFront(r) == 'T'
+				&& currentState.getRedClimb() < 2 && r.getColor() == 0) {
 			possibleActions.add(9);
 		}
-		if (currentNode.getTime() / speed / robotCount > 120 && layout[r.getY()][r.getX()] == 'h' && getFront(r) == 'T'
-				&& currentNode.getBlueClimb() < 2 && r.getColor() == 1) {
+		if (currentState.getTime() / speed / robotCount > 120 && layout[r.getY()][r.getX()] == 'h' && getFront(r) == 'T'
+				&& currentState.getBlueClimb() < 2 && r.getColor() == 1) {
 			possibleActions.add(9);
 		}
 
@@ -120,7 +120,7 @@ public class Simulation {
 	}
 
 	// updates the given node depending on the action
-	public void updateNode(Node node, int action) {
+	public void updateState(State node, int action) {
 		updatePowerCubes(node, action);
 		updateScore(node);
 		node.getRobots()[node.getCurrentPlayer()].update(action);
@@ -138,7 +138,7 @@ public class Simulation {
 	}
 
 	// Draws the given node
-	public void drawNode(Node node) {
+	public void drawState(State node) {
 		arena.draw();
 
 		for (Robot r : node.getRobots()) {
@@ -177,7 +177,7 @@ public class Simulation {
 
 	}
 
-	private void updateScore(Node node) {
+	private void updateScore(State node) {
 		if (node.getPowerCubes().get('W') > node.getPowerCubes().get('V'))
 			node.setRedScore(node.getRedScore() + 1);
 		if (node.getPowerCubes().get('S') > node.getPowerCubes().get('s'))
@@ -189,7 +189,7 @@ public class Simulation {
 
 	}
 
-	private void updatePowerCubes(Node node,int action) {
+	private void updatePowerCubes(State node,int action) {
 		int temp;
 		int score = 0;
 		Robot r = node.getRobots()[node.getCurrentPlayer()];
@@ -373,12 +373,12 @@ public class Simulation {
 		this.layout = layout;
 	}
 
-	public Node getInitNode() {
-		return initNode;
+	public State getInitState() {
+		return initState;
 	}
 
-	public void setInitNode(Node initNode) {
-		this.initNode = initNode;
+	public void setInitState(State initState) {
+		this.initState = initState;
 	}
 
 	public Random getRandom() {
@@ -389,12 +389,12 @@ public class Simulation {
 		this.random = random;
 	}
 
-	public Node getCurrentNode() {
-		return currentNode;
+	public State getCurrentState() {
+		return currentState;
 	}
 
-	public void setCurrentNode(Node currentNode) {
-		this.currentNode = currentNode;
+	public void setCurrentState(State currentState) {
+		this.currentState = currentState;
 	}
 
 	public int getRobotCount() {

@@ -15,18 +15,18 @@ public class QLearning {
     private final double alpha = 0.1; // Learning rate
     private final double gamma = 0.999; // Eagerness - 0 looks in the near future, 1 looks in the distant future
 
-    private final int arenaWidth = 10;
-    private final int arenaHeight = 10;
+    private final int arenaWidth = 25;
+    private final int arenaHeight = 12;
     private final int statesCount = arenaHeight * arenaWidth;
     private final int reward = 100;
-    private final int penalty = -10;
+    private final int penalty = -100;
 
     private char[][] arena;  // arena read from file
     private int[][] R;       // Reward lookup
     private double[][] Q;    // Q learning
     
     //GUI
-    private int size = 50;
+    private int size = 75;
 
     public static void main(String args[]) throws InterruptedException {
         QLearning ql = new QLearning();
@@ -37,11 +37,12 @@ public class QLearning {
         
 
         for (int i = 0;i < 100;i++) {
+        	int time = 0;
         ql.init();
         ql.calculateQ();
-        ql.printQ();
-        ql.printPolicy();
-        ql.result(g);
+       // ql.printQ();
+       // ql.printPolicy();
+        ql.result(g, time);
         }
         
     }
@@ -64,14 +65,15 @@ public class QLearning {
     	c[arenaHeight - 1][arenaWidth-1] = 'F';
     	return c;
     }
-    public void result(Graphics g) throws InterruptedException {
+    public void result(Graphics g, int time) throws InterruptedException {
     	drawarena(g);
-    	Thread.sleep(3000);
+    	//Thread.sleep(3000);
 
-    	while(!win()) {
-    		updatearena();
+    	while(!win() && time <= 5) {
+    		time = updatearena(time);
+    		//System.out.println(time);
     		drawarena(g);
-    		Thread.sleep(250);
+    		Thread.sleep(200);
     	}
     }
     
@@ -86,16 +88,17 @@ public class QLearning {
     	}
 		return index;
     }
-    public void updatearena() {
+    public int updatearena(int time) {
     	int crtState = currentState();
     	int nxtState = getPolicyFromState(currentState());
-    	
+    	if (crtState == nxtState) time++;
     	arena[crtState / arenaWidth][crtState - crtState / arenaWidth * arenaWidth] = '0';
     	if (arena[nxtState / arenaWidth][nxtState - nxtState / arenaWidth * arenaWidth] == 'F') {
     		arena[nxtState / arenaWidth][nxtState - nxtState / arenaWidth * arenaWidth] = 'W';
     	} else {
     		arena[nxtState / arenaWidth][nxtState - nxtState / arenaWidth * arenaWidth] = 'R';
     	}
+    	return time;
     }
     
     
@@ -228,7 +231,7 @@ public class QLearning {
                     }
                 }
             }
-            printR(R);
+            //printR(R);
         } catch (IOException e) {
             e.printStackTrace();
         }

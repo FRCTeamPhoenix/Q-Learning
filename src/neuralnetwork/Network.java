@@ -24,7 +24,7 @@ public class Network {
 	public static Matrix sigmoid(Matrix z) {
 		Matrix out = z;
 		for(int i=0;i<z.rows();i++)
-			for(int j=0;j<z.columns();i++)
+			for(int j=0;j<z.columns();j++)
 				out.put(i, j, sigmoid(out.get(i, j)));
 		return out;
 	}
@@ -36,7 +36,7 @@ public class Network {
 	public static Matrix sigmoid_prime(Matrix z) {
 		Matrix out = z;
 		for(int i=0;i<z.rows();i++)
-			for(int j=0;j<z.columns();i++)
+			for(int j=0;j<z.columns();j++)
 				out.put(i, j, sigmoid_prime(out.get(i, j)));
 		return out;
 	}
@@ -63,6 +63,10 @@ public class Network {
 	}
 
 	public Matrix feedforward(Matrix input) {
+		System.out.println(hidden_weights);
+		System.out.println(hidden_bias);
+		System.out.println(output_weights);
+		System.out.println(output_bias);
 		Matrix prop1 = hidden_weights.times(input).plus(hidden_bias);
 		Matrix prop2 = output_weights.times(prop1).plus(output_bias);
 		return prop2;
@@ -83,9 +87,9 @@ public class Network {
 	
 	private void update_mini_batch(List<NetworkEntry> mini_batch, double eta, int n) {
 		Matrix hidden_weightsG = new Matrix(hidden_weights.rows(), hidden_weights.columns());
-		Matrix hidden_biasG  = new Matrix(hidden_bias.columns(), 1);
+		Matrix hidden_biasG  = new Matrix(hidden_bias.rows(), 1);
 		Matrix output_weightsG = new Matrix(output_weights.rows(), output_weights.columns());
-		Matrix output_biasG = new Matrix(output_bias.columns(), 1);
+		Matrix output_biasG = new Matrix(output_bias.rows(), 1);
 		
 		for(NetworkEntry entry : mini_batch) {
 			Matrix[] dgrad = backpropagate(entry);
@@ -97,20 +101,20 @@ public class Network {
 		}
 		
 		for(int i=0;i<hidden_weights.rows();i++) {
-			for(int j=0;j<hidden_weights.columns();i++) {
+			for(int j=0;j<hidden_weights.columns();j++) {
 				hidden_weights.put(i, j, hidden_weights.get(i, j) - eta * hidden_weightsG.get(i, j) / mini_batch.size());
 			}
 		}
 		for(int i=0;i<hidden_bias.columns();i++) {
-			hidden_bias.put(1, i, hidden_bias.get(1, i) - eta * hidden_biasG.get(1, i) / mini_batch.size());
+			hidden_bias.put(i, 0, hidden_bias.get(i, 0) - eta * hidden_biasG.get(i, 0) / mini_batch.size());
 		}
 		for(int i=0;i<output_weights.rows();i++) {
-			for(int j=0;j<output_weights.columns();i++) {
+			for(int j=0;j<output_weights.columns();j++) {
 				output_weights.put(i, j, output_weights.get(i, j) - eta * output_weightsG.get(i, j) / mini_batch.size());
 			}
 		}
 		for(int i=0;i<output_bias.columns();i++) {
-			output_bias.put(1, i, output_bias.get(1, i) - eta * output_biasG.get(1, i) / mini_batch.size());
+			output_bias.put(i, 0, output_bias.get(i, 0) - eta * output_biasG.get(i, 0) / mini_batch.size());
 		}
 	}
 	
@@ -121,7 +125,6 @@ public class Network {
 		Matrix[] activations = new Matrix[3];
 		Matrix[] zValues = new Matrix[2];
 		activations[0] = a;
-		
 		Matrix z = hidden_weights.times(a).plus(hidden_bias);
 		zValues[0] = z;
 		a = sigmoid(z);
@@ -132,13 +135,13 @@ public class Network {
 		a = sigmoid(z);
 		activations[2] = a;
 		
-		Matrix delta = cost_error(activations[2], new Matrix(entry.getOutput()), zValues[2]);
+		Matrix delta = cost_error(activations[2], new Matrix(entry.getOutput()), zValues[1]);
 		out[3] = new Matrix(delta);
 		out[2] = delta.times(activations[1].transpose());
 		
-		z = new Matrix(zValues[2]);
+		z = new Matrix(zValues[0]);
 		Matrix sp = sigmoid_prime(z);
-		delta = hidden_weights.transpose().times(delta).hadamard(sp);
+		delta = output_weights.transpose().times(delta).hadamard(sp);
 		out[1] = new Matrix(delta);
 		out[0] = delta.times(activations[0].transpose());
 		

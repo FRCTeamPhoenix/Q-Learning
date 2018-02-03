@@ -131,6 +131,9 @@ public class Robot {
 	public String toString() {
 		return x + " " + y + " " + cube + " "  + color + " "+ direction;
 	}
+	public String toData() {
+		return (x / 56.0)  + " " + (y / 26.0) + " " + cube + " "  + color + " "+ direction;
+	}
 
 	public int getColor() {
 		return color;

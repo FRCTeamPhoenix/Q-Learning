@@ -40,20 +40,20 @@ public class Simulation {
 		initPowerCubes();
 		layout = arena.getLayout();
 		currentState = new State(initState);
-		drawState(currentState);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+//		drawState(currentState);
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 		while (currentState.getTime() <= gameDuration) {
 			if (currentState.getTime() % (robotCount) == 1) {
-				drawState(currentState);
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				//drawState(currentState);
+		//		try {
+			//		Thread.sleep(100);
+			//	} catch (InterruptedException e) {
+			//		e.printStackTrace();
+			//	}
 			}
 
 			updateState(currentState, createRandomAction(currentState.getRobots()[currentState.getCurrentPlayer()]));

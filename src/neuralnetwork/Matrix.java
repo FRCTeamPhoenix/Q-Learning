@@ -130,6 +130,18 @@ public class Matrix {
         return C;
     }
     
+    public String toString() {
+    	String out = "";
+    	for(int i=0;i<M;i++) {
+    		out += "[";
+    		for(int j=0;j<N;j++) {
+    			out += (data[i][j] + " ");
+    		}
+    		out += "]\n";
+    	}
+    	return out;
+    }
+    
     public Matrix scale(double s) {
     	Matrix A = this;
     	for(int i=0;i<M;i++)
